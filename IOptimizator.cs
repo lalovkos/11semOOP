@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Functions;
 using Functionals;
+using Utility;
 
 namespace Optimizator
 {

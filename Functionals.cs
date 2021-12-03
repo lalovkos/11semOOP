@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Functions;
+using Utility;
+using MathNet.Numerics.LinearAlgebra;
+
 
 namespace Functionals
 {
@@ -17,6 +20,8 @@ namespace Functionals
     interface ILeastSquaresFunctional : IFunctional
     {
         IVector Residual(IFunction function);
-        IMatrix Jacobian(IFunction function);
+
+        //TODO: Изменить на IMatrix
+        Matrix<double> Jacobian(IFunction function);
     }
 }
