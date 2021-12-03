@@ -4,7 +4,7 @@ using Functions;
 
 namespace Functionals
 {
-    interface IFunctional
+    interface IFunctional   
     {
         double Value(IFunction function);
     }
