@@ -18,18 +18,25 @@ namespace Utility
             this.Add(element);
         }
     }
+
     interface IMatrix
     {
+        abstract string ToString();
     }
 
-    class Matrix: IMatrix
+    class Matrix : IMatrix
     {
         private Matrix<double> _internalmatrix;
 
-        Matrix(List<List<double>> i) 
-        { 
-            
-        } 
+        Matrix(double[,] matrix)
+        {
+            _internalmatrix = DenseMatrix.OfArray(matrix);
+        }
+
+        public string ToString()
+        {
+            return _internalmatrix.ToString();
+        }
     }
 
 
