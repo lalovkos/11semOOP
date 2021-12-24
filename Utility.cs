@@ -1,19 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using System.Threading;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace Utility
 {
 
     interface IVector : IList<double>
     {
-        abstract void Push_back(double element);
+        public new string ToString();
     }
 
     class Vector : List<double>, IVector
     {
+        public Vector()
+        {
+        }
+
+        public Vector(IVector vec)
+        {
+            foreach (var v in vec)
+            {
+                this.Add(v);
+            }
+            
+        }
+
+        public Vector(double[] mas)
+        {
+            foreach (var i in mas)
+            {
+                this.Add(i);
+            }
+        }
+
+        public new string ToString()
+        {
+            string sumstr = default;
+            for (int i = 0; i < this.Count; i++)
+            {
+                sumstr += this[i] + " ";
+            }
+
+            return sumstr;
+        }
+
         public void Push_back(double element) 
         {
             this.Add(element);
@@ -22,37 +54,36 @@ namespace Utility
 
     interface IMatrix
     {
-        abstract string ToString();
-        abstract IEnumerable<ValueTuple<int, Vector<double>>> EnumerateRowsIndexed();
-        abstract public Vector<double> Row(int index);
+        public IVector GetRow(int rowNumber);
+
     }
 
     class Matrix : IMatrix
     {
-        private Matrix<double> _internalmatrix;
+        private List<IVector> _internalmatrix;
 
-        Matrix(double[,] matrix)
+        public IVector this[int index]
         {
-            _internalmatrix = DenseMatrix.OfArray(matrix);
+            get
+            {
+                return _internalmatrix[index];
+            }
+            set
+            {
+                _internalmatrix[index] = value;
+            }
+
         }
 
-        public string ToString()
+        public Matrix(List<IVector> matrix)
         {
-            return _internalmatrix.ToString();
+            _internalmatrix = matrix;
         }
 
-        public IEnumerable<ValueTuple<int, Vector<double>>> EnumerateRowsIndexed()
+        public IVector GetRow(int rowNumber)
         {
-            return _internalmatrix.EnumerateRowsIndexed();
+            return _internalmatrix[rowNumber];
         }
-
-        public Vector<double> Row(int index)
-        {
-            Vector<double> row = default;
-            _internalmatrix.Row(index, row);
-            return row;
-        }
-
     }
 
 

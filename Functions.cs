@@ -11,6 +11,7 @@ namespace Functions
         interface IParametricFunction
         {
             abstract IFunction Bind(IVector parameters);
+            abstract IFunction Copy();
         }
 
         interface IFunction
@@ -36,7 +37,7 @@ namespace Functions
             public double Value(IVector point)
             {
                 double sum = default;
-                for (int i = 0; i < _parameters.Count(); i++)
+                for (int i = 0; i < point.Count(); i++)
                 {
                     sum += _parameters[i] * point[i];
                 }
@@ -48,9 +49,14 @@ namespace Functions
                 IVector gradient = new Vector();
                 for (int i = 0; i < _parameters.Count()-1; i++)
                 {
-                    gradient.Push_back(_parameters[i]);
+                    gradient.Add(_parameters[i]);
                 }
                 return gradient;
+            }
+
+            public IFunction Copy()
+            {
+                return new LinearFunction();
             }
 
         }
@@ -70,11 +76,15 @@ namespace Functions
                 double sum = default;
                 for (int i = 0; i < _parameters.Count(); i++)
                 {
-                    sum += _parameters[i] * Math.Pow(point[i], _parameters.Count() - i - 1);
+                    sum += _parameters[i] * Math.Pow(point[0], _parameters.Count() - i - 1);
                 }
 
                 return sum;
             }
+            public IFunction Copy()
+            {
+                return new PolinomFunction();
+            }
 
-        }
+    }
 }

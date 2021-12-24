@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using Functions;
-using MathNet.Numerics;
-using MathNet.Numerics.LinearAlgebra;
 using Utility;
+using Vector = Utility.Vector;
 
 
 namespace Functionals
@@ -25,9 +26,9 @@ namespace Functionals
         abstract IMatrix Jacobian(IFunction function);
     }
 
-    class L1NormLinear : IDifferentiableFunctional
+    class L1NormLinear : IFunctional
     {
-        private IMatrix _pointsx;
+        private IMatrix _pointsx = default;
         private IVector _pointsy = default;
 
         public L1NormLinear(IMatrix pointsx, IVector pointsy)
@@ -38,32 +39,67 @@ namespace Functionals
 
         public double Value(IFunction function)
         {
-            Vector<double> row = default;
+            IVector row = default;
             double sum = 0;
-            for (int i =0; i < _pointsy.Count; i++)
-            { 
-                row = _pointsx.Row(i);
-                sum += Math.Abs(function.Value(row as IVector) - _pointsy[i]);
+            for (int i = 0; i < _pointsy.Count; i++)
+            {
+                row = _pointsx.GetRow(i);
+                sum += Math.Abs(function.Value(_pointsx.GetRow(i)) - _pointsy[i]);
             }
 
             return sum;
         }
-
-        public IVector Gradient(IFunction function)
-        {
-            Vector<double> grad = default;
-            for (int i = 0; i < grad.Count; i++)
-            {
-                var func = function as IParametricFunction;
-                grad[i] = Value(function);
-            }
-
-            return grad as IVector;
-        }
-
-
     }
 
+    class L1NormPolynom : IFunctional
+    {
+        private IVector _pointsx = default;
+        private IVector _pointsy = default;
+
+        public L1NormPolynom(IVector pointsx, IVector pointsy)
+        {
+            _pointsx = pointsx;
+            _pointsy = pointsy;
+        }
+
+        public double Value(IFunction function)
+        {
+            double sum = 0;
+            for (int i = 0; i < _pointsy.Count; i++)
+            {
+                Vector vec = new Vector();
+                vec.Add(_pointsx[i]); 
+                sum += Math.Abs(function.Value(vec) - _pointsy[i]);
+            }
+
+            return sum;
+        }
+    }
+
+    class L2NormPolynom : IFunctional
+    {
+        private IVector _pointsx = default;
+        private IVector _pointsy = default;
+
+        public L2NormPolynom(IVector pointsx, IVector pointsy)
+        {
+            _pointsx = pointsx;
+            _pointsy = pointsy;
+        }
+
+        public double Value(IFunction function)
+        {
+            double sum = 0;
+            for (int i = 0; i < _pointsy.Count; i++)
+            {
+                IVector vec = default;
+                vec.Add(_pointsx[i]);
+                sum += Math.Pow(function.Value(vec) - _pointsy[i], 2);
+            }
+
+            return sum;
+        }
+    }
 
 
 }
