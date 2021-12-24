@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 
@@ -22,6 +23,8 @@ namespace Utility
     interface IMatrix
     {
         abstract string ToString();
+        abstract IEnumerable<ValueTuple<int, Vector<double>>> EnumerateRowsIndexed();
+        abstract public Vector<double> Row(int index);
     }
 
     class Matrix : IMatrix
@@ -37,6 +40,19 @@ namespace Utility
         {
             return _internalmatrix.ToString();
         }
+
+        public IEnumerable<ValueTuple<int, Vector<double>>> EnumerateRowsIndexed()
+        {
+            return _internalmatrix.EnumerateRowsIndexed();
+        }
+
+        public Vector<double> Row(int index)
+        {
+            Vector<double> row = default;
+            _internalmatrix.Row(index, row);
+            return row;
+        }
+
     }
 
 

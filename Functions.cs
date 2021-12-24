@@ -54,4 +54,27 @@ namespace Functions
             }
 
         }
+
+        class PolinomFunction : IParametricFunction, IFunction
+        {
+            private IVector _parameters;
+
+            public IFunction Bind(IVector parameters)
+            {
+                this._parameters = parameters;
+                return this;
+            }
+
+            public double Value(IVector point)
+            {
+                double sum = default;
+                for (int i = 0; i < _parameters.Count(); i++)
+                {
+                    sum += _parameters[i] * Math.Pow(point[i], _parameters.Count() - i - 1);
+                }
+
+                return sum;
+            }
+
+        }
 }
