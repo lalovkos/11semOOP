@@ -92,7 +92,7 @@ namespace Functionals
             double sum = 0;
             for (int i = 0; i < _pointsy.Count; i++)
             {
-                IVector vec = default;
+                Vector vec = new Vector();
                 vec.Add(_pointsx[i]);
                 sum += Math.Pow(function.Value(vec) - _pointsy[i], 2);
             }

@@ -36,7 +36,7 @@ namespace Optimizator
     {
         public static IVector Optimize(IFunctional objective, IParametricFunction function, IVector initialParameters, IVector minimumParameters, IVector maximumParameters)
         {
-            IVector minimazedVector = initialParameters;
+            IVector minimazedVector = new Vector(initialParameters);
             IParametricFunction minfunc = function.Copy() as IParametricFunction;
             minfunc.Bind(new Vector(initialParameters));
 
