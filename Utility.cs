@@ -1,66 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Threading;
 
 namespace Utility
 {
-
-    interface IVector : IList<double>
+    interface IVector : IList<double> , ICloneable
     {
-        public new string ToString();
+        public string ToString();
     }
 
     class Vector : List<double>, IVector
     {
         public Vector()
         {
+
+        }
+
+        public Vector(double value)
+        {
+            Add(value);
         }
 
         public Vector(IVector vec)
         {
             foreach (var v in vec)
             {
-                this.Add(v);
+                Add(v);
             }
-            
         }
 
         public Vector(double[] mas)
         {
             foreach (var i in mas)
             {
-                this.Add(i);
+                Add(i);
             }
         }
 
         public new string ToString()
         {
-            string sumstr = default;
-            for (int i = 0; i < this.Count; i++)
+            string ret_string = String.Empty;
+            for (int i = 0; i < Count; i++)
             {
-                sumstr += this[i] + " ";
+                ret_string += this[i] + "; ";
             }
-
-            return sumstr;
+            return ret_string;
         }
 
-        public void Push_back(double element) 
-        {
-            this.Add(element);
+        public object Clone(){
+            return MemberwiseClone();
         }
-    }
 
-    interface IMatrix
+}
+
+    interface IMatrix : ICloneable
     {
         public IVector GetRow(int rowNumber);
-
     }
 
     class Matrix : IMatrix
     {
         private List<IVector> _internalmatrix;
+       
+        private List<IVector> matrix
+        {
+            get { return _internalmatrix; }
+            set { _internalmatrix = value; }
+        }
 
         public IVector this[int index]
         {
@@ -84,6 +89,12 @@ namespace Utility
         {
             return _internalmatrix[rowNumber];
         }
+        
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
     }
 
 

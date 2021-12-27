@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Functions;
 using Functionals;
 using Utility;
@@ -34,33 +30,45 @@ namespace Optimizator
 
     static class Annealing
     {
-        public static IVector Optimize(IFunctional objective, IParametricFunction function, IVector initialParameters, IVector minimumParameters, IVector maximumParameters)
+        public static IVector Optimize(IFunctional objective, IParametricFunction function, IVector initialParameters,
+            IVector minimumParameters, IVector maximumParameters, int maxIter = 10000)
         {
             IVector minimazedVector = new Vector(initialParameters);
-            IParametricFunction minfunc = function.Copy() as IParametricFunction;
-            minfunc.Bind(new Vector(initialParameters));
 
-            for (int c = 0; c < 10000; c++)
+            try //Trying to cast and find min functional 
             {
-                for (int i = 0; i < minimumParameters.Count; i++)
+                IParametricFunction minfunc = function.Clone() as IParametricFunction;
+                minfunc?.Bind(new Vector(initialParameters));
+
+                for (int iter = 0; iter < maxIter; iter++)
                 {
-                    initialParameters[i] = GetRandomNumber(minimumParameters[i], maximumParameters[i]);
+                    for (int i = 0; i < minimumParameters.Count; i++)
+                    {
+                        initialParameters[i] = GetRandomNumber(minimumParameters[i], maximumParameters[i]);
+                    }
+
+                    function.Bind(initialParameters);
+
+                    if (objective.Value(function as IFunction) < objective.Value(minfunc as IFunction))
+                    {
+                        minimazedVector = new Vector(initialParameters);
+                        minfunc.Bind(minimazedVector);
+                    }
+
+                    if (iter % 100 == 0)
+                    {
+                        Console.WriteLine("functional = " + objective.Value(minfunc as IFunction));
+                    }
                 }
 
-                function.Bind(initialParameters);
-
-                if (objective.Value(function as IFunction) < objective.Value(minfunc as IFunction))
-                {
-                    minimazedVector = new Vector(initialParameters);
-                    minfunc.Bind(minimazedVector);
-                }
-
-                if (c % 100 == 0)
-                {
-                    Console.WriteLine("functional = " + objective.Value(minfunc as IFunction));
-                }
+                return minimazedVector;
             }
-            return minimazedVector;
+            catch
+            {
+                Console.Write("Function is not IParametricFunction or null");
+            }
+
+            return null;
         }
 
         private static double GetRandomNumber(double minimum, double maximum)
@@ -69,4 +77,5 @@ namespace Optimizator
             return random.NextDouble() * (maximum - minimum) + minimum;
         }
     }
+
 }

@@ -1,36 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MathNet.Numerics.LinearAlgebra;
 using Utility;
 
 namespace Functions
 {
-        interface IParametricFunction
+        interface IParametricFunction : ICloneable
         {
-            abstract IFunction Bind(IVector parameters);
-            abstract IFunction Copy();
+            IFunction Bind(IVector parameters);
         }
 
-        interface IFunction
+        interface IFunction : ICloneable
         {
-            abstract double Value(IVector point);
+            double Value(IVector point);
         }
 
         interface IDifferentiableFunction : IFunction
         {
-            abstract IVector Gradient(IVector point);
+            IVector Gradient(IVector point);
         }
 
-        class LinearFunction : IDifferentiableFunction, IParametricFunction
+        class LinearFunction : IDifferentiableFunction, IParametricFunction, ICloneable
         {
             private IVector _parameters;
 
+            public IVector parameters
+            {
+                get { return _parameters; }
+                set { _parameters = value; }
+            }
+
             public IFunction Bind(IVector parameters)
             {
-                this._parameters = parameters;
+                this.parameters = parameters;
                 return this;
             }
 
@@ -53,24 +54,29 @@ namespace Functions
                 }
                 return gradient;
             }
-
-            public IFunction Copy()
+            
+            public object Clone()
             {
-                return new LinearFunction();
+                return MemberwiseClone();
             }
 
         }
 
-        class PolinomFunction : IParametricFunction, IFunction
+        class PolinomFunction : IParametricFunction, IFunction, ICloneable
         {
             private IVector _parameters;
+            public IVector parameters
+            {
+                get { return _parameters; }
+                set { _parameters = value; }
+            }
 
             public IFunction Bind(IVector parameters)
             {
-                this._parameters = parameters;
+                this.parameters = parameters;
                 return this;
             }
-
+           
             public double Value(IVector point)
             {
                 double sum = default;
@@ -78,13 +84,13 @@ namespace Functions
                 {
                     sum += _parameters[i] * Math.Pow(point[0], _parameters.Count() - i - 1);
                 }
-
                 return sum;
             }
-            public IFunction Copy()
+            
+            public object Clone()
             {
-                return new PolinomFunction();
+                return MemberwiseClone();
             }
 
-    }
+        }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading;
 using Functionals;
 using Functions;
 using Optimizator;
